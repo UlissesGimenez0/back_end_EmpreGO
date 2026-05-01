@@ -3,10 +3,7 @@ package com.example.empre_go.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-<<<<<<< HEAD
 import org.springframework.web.bind.annotation.CrossOrigin;
-=======
->>>>>>> main
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +16,7 @@ import com.example.empre_go.repositories.EmpregadorRepository;
 
 import lombok.RequiredArgsConstructor;
 
-<<<<<<< HEAD
-@CrossOrigin(origins = "http://localhost:4200")
-=======
->>>>>>> main
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -31,7 +25,6 @@ public class AuthController {
     private final CandidatoRepository candidatoRepository;
     private final EmpregadorRepository empregadorRepository;
 
-<<<<<<< HEAD
 @PostMapping("/registro")
 public ResponseEntity<String> registro(@RequestBody Map<String, String> body) {
     if (body.get("role").equals("CANDIDATO")) {
@@ -53,25 +46,6 @@ public ResponseEntity<String> registro(@RequestBody Map<String, String> body) {
     }
     return ResponseEntity.ok("Cadastro realizado!");
 }
-=======
-    @PostMapping("/registro")
-    public ResponseEntity<String> registro(@RequestBody Map<String, String> body) {
-        if (body.get("role").equals("CANDIDATO")) {
-            Candidato c = new Candidato();
-            c.setNome(body.get("nome"));
-            c.setEmail(body.get("email"));
-            c.setSenha(body.get("senha"));
-            candidatoRepository.save(c);
-        } else {
-            Empregador e = new Empregador();
-            e.setNome(body.get("nome"));
-            e.setEmail(body.get("email"));
-            e.setSenha(body.get("senha"));
-            empregadorRepository.save(e);
-        }
-        return ResponseEntity.ok("Cadastro realizado!");
-    }
->>>>>>> main
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> body) {
