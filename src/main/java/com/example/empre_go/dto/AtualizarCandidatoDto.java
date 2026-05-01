@@ -1,4 +1,4 @@
-package com.example.empre_go.models;
+package com.example.empre_go.dto;
 
 import lombok.Data;
 
