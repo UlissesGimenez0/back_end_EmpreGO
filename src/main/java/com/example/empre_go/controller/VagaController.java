@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.empre_go.dto.VagaResponseDto;
 import com.example.empre_go.models.Candidato;
 import com.example.empre_go.models.Empregador;
 import com.example.empre_go.models.StatusVaga;
@@ -26,8 +26,21 @@ public class VagaController {
     private final EmpregadorRepository empregadorRepository;
 
     @GetMapping
-    public ResponseEntity<List<Vaga>> listar() {
-        return ResponseEntity.ok(vagaRepository.findAll());
+    public ResponseEntity<List<VagaResponseDto>> listar() {
+        return ResponseEntity.ok(vagaRepository.findAll().stream()
+                .map(vaga -> new VagaResponseDto(
+                        vaga.getId(),
+                        vaga.getTitulo(),
+                        vaga.getDescricao(),
+                        vaga.getAutor().getNome(),
+                        vaga.getEndereco(),
+                        vaga.getTempoMedioEstimado(),
+                        vaga.getLat(),
+                        vaga.getLng(),
+                        vaga.getStatus(),
+                        vaga.getCandidatoSelecionadoId(),
+                        vaga.getAutor().getId()))
+                .toList());
     }
 
     @GetMapping("/{id}")
