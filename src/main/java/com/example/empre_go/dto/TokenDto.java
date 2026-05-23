@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenDto {
-
-    private Integer id;
     private String email;
     private String token;
+    private Long candidatoId;
 }

@@ -10,7 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import com.example.empre_go.models.Candidato;
+import com.example.empre_go.repositories.CandidatoRepository;
 import com.example.empre_go.dto.AutenticacaoDto;
 import com.example.empre_go.dto.TokenDto;
 
@@ -27,6 +28,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final CandidatoRepository candidatoRepository;
 
     @Override
     @Transactional
@@ -37,7 +39,21 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         usuario.setPerfil(dto.getPerfil());
 
-        return usuarioRepository.save(usuario);
+        Usuario usuarioSalvo = usuarioRepository.save(usuario);
+
+        if ("CANDIDATO".equalsIgnoreCase(dto.getPerfil()) || "Usuario".equalsIgnoreCase(dto.getPerfil())) {
+            Candidato candidato = new Candidato();
+            candidato.setNome(dto.getNome());
+            candidato.setEmail(dto.getEmail());
+            candidato.setSenha(dto.getSenha());
+            candidato.setCidade(dto.getCidade());
+            candidato.setTelefone(dto.getTelefone());
+            candidato.setIdade(dto.getIdade());
+
+            candidatoRepository.save(candidato);
+        }
+
+        return usuarioSalvo;
     }
 
     @Override
@@ -87,8 +103,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
         boolean senhaOK = passwordEncoder.matches(
                 usuario.getSenha(),
-                user.getPassword()
-        );
+                user.getPassword());
 
         if (senhaOK) {
             return user;
@@ -103,14 +118,17 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
         boolean senhaOK = passwordEncoder.matches(
                 autenticacao.getSenha(),
-                user.getPassword()
-        );
+                user.getPassword());
 
         if (senhaOK) {
             Usuario usuario = usuarioRepository.findByEmail(autenticacao.getEmail());
             String token = jwtService.gerarToken(usuario);
 
-            return new TokenDto(usuario.getId(), autenticacao.getEmail(), token);
+            Long candidatoId = candidatoRepository.findByEmail(autenticacao.getEmail())
+                    .map(Candidato::getId)
+                    .orElse(null);
+
+            return new TokenDto(autenticacao.getEmail(),token,candidatoId);
         }
 
         throw new RuntimeException("Senha inválida");
