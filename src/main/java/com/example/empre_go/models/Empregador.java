@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Entity
 @Table(name = "empregadores")
@@ -28,4 +27,6 @@ public class Empregador {
     private String senha;
 
     private String nomeEmpresa;
+
+    private Double avaliacao;
 }
