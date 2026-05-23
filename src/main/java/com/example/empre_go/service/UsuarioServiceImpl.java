@@ -110,7 +110,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
             Usuario usuario = usuarioRepository.findByEmail(autenticacao.getEmail());
             String token = jwtService.gerarToken(usuario);
 
-            return new TokenDto(autenticacao.getEmail(), token);
+            return new TokenDto(usuario.getId(), autenticacao.getEmail(), token);
         }
 
         throw new RuntimeException("Senha inválida");

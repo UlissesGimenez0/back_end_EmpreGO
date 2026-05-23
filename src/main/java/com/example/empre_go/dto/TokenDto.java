@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TokenDto {
 
+    private Integer id;
     private String email;
     private String token;
 }
