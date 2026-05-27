@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.empre_go.models.Candidato;
+import com.example.empre_go.models.Empregador;
 import com.example.empre_go.repositories.CandidatoRepository;
+import com.example.empre_go.repositories.EmpregadorRepository;
 import com.example.empre_go.dto.AutenticacaoDto;
 import com.example.empre_go.dto.TokenDto;
 
@@ -29,6 +31,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final CandidatoRepository candidatoRepository;
+    private final EmpregadorRepository empregadorRepository;
 
     @Override
     @Transactional
@@ -51,6 +54,16 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
             candidato.setIdade(dto.getIdade());
 
             candidatoRepository.save(candidato);
+        }
+
+        if ("EMPREGADOR".equalsIgnoreCase(dto.getPerfil())) {
+            Empregador empregador = new Empregador();
+            empregador.setNome(dto.getNome());
+            empregador.setEmail(dto.getEmail());
+            empregador.setSenha(dto.getSenha());
+            empregador.setNomeEmpresa(dto.getNome());
+
+            empregadorRepository.save(empregador);
         }
 
         return usuarioSalvo;
@@ -123,12 +136,20 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         if (senhaOK) {
             Usuario usuario = usuarioRepository.findByEmail(autenticacao.getEmail());
             String token = jwtService.gerarToken(usuario);
-
             Long candidatoId = candidatoRepository.findByEmail(autenticacao.getEmail())
                     .map(Candidato::getId)
                     .orElse(null);
 
-            return new TokenDto(autenticacao.getEmail(),token,candidatoId);
+            Long empregadorId = empregadorRepository.findByEmail(autenticacao.getEmail())
+                    .map(Empregador::getId)
+                    .orElse(null);
+
+            return new TokenDto(
+                    autenticacao.getEmail(),
+                    token,
+                    usuario.getPerfil(),
+                    candidatoId,
+                    empregadorId);
         }
 
         throw new RuntimeException("Senha inválida");
